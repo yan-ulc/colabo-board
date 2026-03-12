@@ -5,7 +5,7 @@ export default defineSchema({
   users: defineTable({
     name: v.string(),
     email: v.string(),
-    externalId: v.string(), 
+    externalId: v.string(),
     image: v.optional(v.string()),
   }).index("by_externalId", ["externalId"]),
 
@@ -18,7 +18,8 @@ export default defineSchema({
     boardId: v.id("boards"),
     userId: v.id("users"),
     status: v.union(v.literal("pending"), v.literal("approved")),
-  }).index("by_boardId", ["boardId"])
+  })
+    .index("by_boardId", ["boardId"])
     .index("by_userId", ["userId"])
     .index("by_board_and_user", ["boardId", "userId"]),
 
@@ -29,5 +30,15 @@ export default defineSchema({
     y: v.number(),
     color: v.string(),
     lastEditedBy: v.id("users"),
+  }).index("by_boardId", ["boardId"]),
+
+  // Tambahkan ini di dalam defineSchema ({ ... })
+  presence: defineTable({
+    boardId: v.id("boards"),
+    userId: v.id("users"),
+    userName: v.string(),
+    x: v.number(),
+    y: v.number(),
+    updatedAt: v.number(), // Untuk ngebersihin kursor yang "mati"
   }).index("by_boardId", ["boardId"]),
 });
