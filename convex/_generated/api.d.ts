@@ -10,6 +10,7 @@
 
 import type * as board from "../board.js";
 import type * as note from "../note.js";
+import type * as presence from "../presence.js";
 import type * as user from "../user.js";
 
 import type {
@@ -21,6 +22,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   board: typeof board;
   note: typeof note;
+  presence: typeof presence;
   user: typeof user;
 }>;
 
