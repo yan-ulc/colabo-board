@@ -16,7 +16,7 @@ export default defineSchema({
 
   board_members: defineTable({
     boardId: v.id("boards"),
-    userId: v.id("users"),
+    userId: v.id("users"),  
     status: v.union(v.literal("pending"), v.literal("approved")),
   })
     .index("by_boardId", ["boardId"])
