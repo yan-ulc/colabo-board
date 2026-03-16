@@ -2,17 +2,18 @@
 
 import { BoardCanvas } from "@/components/board/BoardCanvas";
 import { CursorsPresence } from "@/components/board/CursorPresence";
+import { InviteModa } from "@/components/board/InviteModal";
 import { PropertiesPanel } from "@/components/board/PropertiesPanel";
 import { StickyNote } from "@/components/board/StickyNote";
+import { UserStack } from "@/components/board/UserStack";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQuery } from "convex/react";
-import { Plus } from "lucide-react";
+import { ArrowLeftIcon, Plus } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { InviteModa } from "@/components/board/InviteModal";
-
 
 export default function BoardPage() {
   const params = useParams();
@@ -50,10 +51,11 @@ export default function BoardPage() {
     // Container utama: Harus FLEX dan HEIGHT FULL SCREEN
     <div className="flex w-screen h-screen overflow-hidden bg-white">
       <InviteModa
-        boardId={boardId} 
-        isOpen={isInviteOpen} 
-        onClose={() => setIsInviteOpen(false)} 
+        boardId={boardId}
+        isOpen={isInviteOpen}
+        onClose={() => setIsInviteOpen(false)}
       />
+
       {/* BAGIAN KIRI: BOARD (4/5) */}
       <section className="relative flex-[4] h-full border-r border-slate-200 overflow-hidden bg-slate-50">
         {/* Add Note Button */}
@@ -64,12 +66,24 @@ export default function BoardPage() {
           <Plus className="w-5 h-5" />
           Add Note
         </button>
-        <Button
-          onClick={() => setIsInviteOpen(true)}
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
-        >
-          Invite Member
-        </Button>
+        <div className="absolute top-4 left-4 z-10 flex items-center gap-3">
+          <Button
+            asChild
+            className="bg-blue-600 text-white shadow-lg hover:bg-blue-700 rounded-lg "
+            size="icon"
+          >
+            <Link href="/dashboard" >
+              <ArrowLeftIcon className="w-5 h-5" />
+            </Link>
+          </Button>
+          <Button
+            onClick={() => setIsInviteOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+          >
+            Invite Member
+          </Button>
+          <UserStack boardId={boardId} />
+        </div>
 
         <BoardCanvas onDeselect={() => setSelectedNoteId(null)}>
           <CursorsPresence boardId={boardId} />

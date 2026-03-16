@@ -22,10 +22,10 @@ export const update = mutation({
       .unique();
 
     if (existing) {
-      await ctx.db.patch(existing._id, { 
-        x: args.x, 
-        y: args.y, 
-        updatedAt: Date.now() 
+      await ctx.db.patch(existing._id, {
+        x: args.x,
+        y: args.y,
+        updatedAt: Date.now(),
       });
     } else {
       await ctx.db.insert("presence", {
@@ -55,7 +55,7 @@ export const list = query({
       .unique();
 
     const threshold = Date.now() - 10000; // 10 detik terakhir
-    
+
     const presences = await ctx.db
       .query("presence")
       .withIndex("by_boardId", (q) => q.eq("boardId", args.boardId))
@@ -64,5 +64,31 @@ export const list = query({
 
     // FILTER: Kembalikan kursor SEMUA ORANG kecuali kursor SAYA SENDIRI
     return presences.filter((p) => p.userId !== me?._id);
+  },
+});
+
+export const getActiveUsers = query({
+  args: { boardId: v.id("boards") },
+  handler: async (ctx, args) => {
+    const threshold = Date.now() - 1000*60*3; // Aktif dalam 3 menit terakhir
+
+    const active = await ctx.db
+      .query("presence")
+      .withIndex("by_boardId", (q) => q.eq("boardId", args.boardId))
+      .filter((q) => q.gt(q.field("updatedAt"), threshold))
+      .collect();
+
+    const activeWithProfiles = await Promise.all(
+      active.map(async (presence) => {
+        const user = await ctx.db.get(presence.userId);
+        return {
+          ...presence,
+          userName: user?.name ?? presence.userName,
+          userImage: user?.image,
+        };
+      }),
+    );
+
+    return activeWithProfiles;
   },
 });
