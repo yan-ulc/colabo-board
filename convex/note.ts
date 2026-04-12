@@ -17,10 +17,11 @@ export const getByBoard = query({
 
 // 2. MUTATION: Membuat note baru
 export const create = mutation({
-  args: { 
+  args: {
     boardId: v.id("boards"),
     x: v.number(),
     y: v.number(),
+    color: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -40,7 +41,7 @@ export const create = mutation({
       text: "New Note",
       x: args.x,
       y: args.y,
-      color: "#fef08a", // Kuning Sticky Note
+      color: args.color ?? "#fef08a",
       lastEditedBy: user._id,
     });
 
@@ -53,9 +54,9 @@ export const updatePosition = mutation({
   args: { id: v.id("notes"), x: v.number(), y: v.number() },
   handler: async (ctx, args) => {
     // Validasi opsional: Cek apakah user punya akses ke board ini
-    await ctx.db.patch(args.id, { 
-      x: args.x, 
-      y: args.y 
+    await ctx.db.patch(args.id, {
+      x: args.x,
+      y: args.y,
     });
   },
 });
@@ -70,7 +71,7 @@ export const remove = mutation({
     // Tapi untuk sekarang, kita langsung hapus:
     await ctx.db.delete(args.id);
   },
-}); 
+});
 
 // convex/notes.ts
 
